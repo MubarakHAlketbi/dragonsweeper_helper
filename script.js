@@ -1,20 +1,20 @@
 // Initial monster data
 const INITIAL_MONSTERS = {
-    'L0': { count: 1, level: 0, max: 1, known: 0, killed: 0 },
-    'L1': { count: 16, level: 1, max: 16, known: 0, killed: 0 },
-    'L1a': { count: 1, level: 1, max: 1, known: 0, killed: 0 },
-    'L2': { count: 10, level: 2, max: 10, known: 0, killed: 0 },
-    'L3': { count: 10, level: 3, max: 10, known: 0, killed: 0 },
-    'L4': { count: 8, level: 4, max: 8, known: 0, killed: 0 },
-    'L5': { count: 6, level: 5, max: 6, known: 0, killed: 0 },
-    'L5a': { count: 1, level: 5, max: 1, known: 0, killed: 0 },
-    'L5b': { count: 45, level: 5, max: 45, known: 0, killed: 0 },
-    'L6': { count: 4, level: 6, max: 4, known: 0, killed: 0 },
-    'L7': { count: 3, level: 7, max: 3, known: 0, killed: 0 },
-    'L8': { count: 5, level: 8, max: 5, known: 0, killed: 0 },
-    'L10': { count: 1, level: 10, max: 1, known: 0, killed: 0 },
-    'L11': { count: 1, level: 11, max: 1, known: 0, killed: 0 },
-    'L100': { count: 9, level: 100, max: 9, known: 0, killed: 0 }
+    'L0': { level: 0, max: 1, known: 0, killed: 0 },
+    'L1': { level: 1, max: 16, known: 0, killed: 0 },
+    'L1a': { level: 1, max: 1, known: 0, killed: 0 },
+    'L2': { level: 2, max: 10, known: 0, killed: 0 },
+    'L3': { level: 3, max: 10, known: 0, killed: 0 },
+    'L4': { level: 4, max: 8, known: 0, killed: 0 },
+    'L5': { level: 5, max: 6, known: 0, killed: 0 },
+    'L5a': { level: 5, max: 1, known: 0, killed: 0 },
+    'L5b': { level: 5, max: 45, known: 0, killed: 0 },
+    'L6': { level: 6, max: 4, known: 0, killed: 0 },
+    'L7': { level: 7, max: 3, known: 0, killed: 0 },
+    'L8': { level: 8, max: 5, known: 0, killed: 0 },
+    'L10': { level: 10, max: 1, known: 0, killed: 0 },
+    'L11': { level: 11, max: 1, known: 0, killed: 0 },
+    'L100': { level: 100, max: 9, known: 0, killed: 0 }
 };
 
 // Current state of monsters
@@ -117,26 +117,21 @@ function initializeMonsterGrid() {
             <div class="monster-info">
                 <img src="asset/${name}.png" alt="${name}" class="monster-icon">
                 <span class="monster-name">Lvl ${data.level}</span>
+                <span class="max-count">Max: ${data.max}</span>
             </div>
             <div class="monster-stats">
-                <div class="monster-counters">
-                    <span class="known-count">Known: ${data.known}</span>
-                    <span class="killed-count">Killed: ${data.killed}</span>
-                    <span class="max-count">Max: ${data.max}</span>
+                <div class="unknown-count">Unknown: ${data.max - (data.known + data.killed)}</div>
+                <div class="control-group">
+                    <span class="count-label">Known:</span>
+                    <button onclick="updateMonsterCount('${name}', -1, 'known')" ${data.known <= 0 ? 'disabled' : ''}>-</button>
+                    <span class="monster-count">${data.known}</span>
+                    <button onclick="updateMonsterCount('${name}', 1, 'known')" ${data.known >= data.max - data.killed ? 'disabled' : ''}>+</button>
                 </div>
-                <div class="monster-controls">
-                    <div class="control-group">
-                        <label>Known:</label>
-                        <button onclick="updateMonsterCount('${name}', -1, 'known')" ${data.count <= 0 ? 'disabled' : ''}>-</button>
-                        <span class="monster-count">${data.count}</span>
-                        <button onclick="updateMonsterCount('${name}', 1, 'known')" ${data.count >= data.max ? 'disabled' : ''}>+</button>
-                    </div>
-                    <div class="control-group">
-                        <label>Killed:</label>
-                        <button onclick="updateMonsterCount('${name}', -1, 'killed')" ${data.killed <= 0 ? 'disabled' : ''}>-</button>
-                        <span class="killed-count">${data.killed}</span>
-                        <button onclick="updateMonsterCount('${name}', 1, 'killed')" ${data.killed >= data.max - data.known ? 'disabled' : ''}>+</button>
-                    </div>
+                <div class="control-group">
+                    <span class="count-label">Killed:</span>
+                    <button onclick="updateMonsterCount('${name}', -1, 'killed')" ${data.killed <= 0 ? 'disabled' : ''}>-</button>
+                    <span class="killed-count">${data.killed}</span>
+                    <button onclick="updateMonsterCount('${name}', 1, 'killed')" ${data.killed >= data.max - data.known ? 'disabled' : ''}>+</button>
                 </div>
             </div>
         `;
@@ -149,12 +144,11 @@ function updateMonsterCount(monsterName, change, type) {
     const monster = currentMonsters[monsterName];
     
     if (type === 'known') {
-        const newCount = monster.count + change;
+        const newKnown = monster.known + change;
         const maxAllowed = monster.max - monster.killed;
         
-        if (newCount >= 0 && newCount <= maxAllowed) {
-            monster.count = newCount;
-            monster.known = monster.max - newCount - monster.killed;
+        if (newKnown >= 0 && newKnown <= maxAllowed) {
+            monster.known = newKnown;
             initializeMonsterGrid();
         }
     } else if (type === 'killed') {
@@ -163,11 +157,6 @@ function updateMonsterCount(monsterName, change, type) {
         
         if (newKilled >= 0 && newKilled <= maxKillable) {
             monster.killed = newKilled;
-            // Adjust available count if needed
-            if (monster.count > monster.max - monster.killed) {
-                monster.count = monster.max - monster.killed;
-                monster.known = monster.max - monster.count - monster.killed;
-            }
             initializeMonsterGrid();
         }
     }
