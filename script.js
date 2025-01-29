@@ -1,3 +1,52 @@
+// Version and update info
+const APP_VERSION = 'v1.2.0';
+const LAST_UPDATED = '2024-01-29';
+const CHANGELOG = {
+    'v1.2.0': [
+        'Improved monster card layout',
+        'Changed known count to start from 0',
+        'Added unknown count display',
+        'Added helper information',
+        'Fixed button states'
+    ],
+    'v1.1.0': [
+        'Added known locations support',
+        'Added remaining level calculation',
+        'Added total locations limit (max 9)'
+    ],
+    'v1.0.0': [
+        'Initial release',
+        'Basic monster tracking',
+        'Combination solver'
+    ]
+};
+
+// Add version and update info
+function addVersionInfo() {
+    const versionSpan = document.querySelector('.version');
+    if (versionSpan) {
+        versionSpan.textContent = APP_VERSION;
+    }
+
+    const helperInfo = document.querySelector('.helper-info');
+    if (helperInfo) {
+        const updateInfo = document.createElement('div');
+        updateInfo.className = 'info-item update-info';
+        
+        const lastUpdated = new Date(LAST_UPDATED);
+        const timeAgo = Math.floor((new Date() - lastUpdated) / (1000 * 60 * 60 * 24));
+        const timeAgoText = timeAgo === 0 ? 'today' : 
+                           timeAgo === 1 ? 'yesterday' : 
+                           `${timeAgo} days ago`;
+
+        updateInfo.innerHTML = `
+            <span class="info-label">Last Updated:</span>
+            ${lastUpdated.toLocaleDateString()} (${timeAgoText})
+        `;
+        helperInfo.appendChild(updateInfo);
+    }
+}
+
 // Initial monster data
 const INITIAL_MONSTERS = {
     'L0': { level: 0, max: 1, known: 0, killed: 0 },
@@ -44,6 +93,7 @@ function validateNumberInput(input, min, max) {
     value = Math.max(min, Math.min(max, value));
     return value.toString();
 }
+
 // Handle input changes
 function handleInputChange(input, min, max) {
     const validValue = validateNumberInput(input, min, max);
@@ -105,7 +155,6 @@ function updateRemainingLevel() {
     remainingDiv.textContent = `Remaining Level for Unknown Locations: ${remaining}`;
     remainingDiv.style.color = remaining < 0 ? 'var(--danger-color)' : 'var(--accent-color)';
 }
-
 
 // Initialize monster tracker grid
 function initializeMonsterGrid() {
@@ -202,11 +251,11 @@ function generateCombinations(locations, targetLevel) {
     
     // Get available monsters (excluding killed ones)
     const availableMonsters = Object.entries(currentMonsters)
-        .filter(([name, data]) => data.count > 0 && data.killed < data.max) // Only include monsters that aren't all killed
+        .filter(([name, data]) => data.known < data.max - data.killed) // Only include monsters that have available slots
         .map(([name, data]) => ({
             name,
             level: data.level,
-            remaining: Math.min(data.count, data.max - data.killed) // Adjust remaining count based on killed monsters
+            remaining: data.max - (data.known + data.killed) // Available slots
         }));
 
     const solutions = [];
@@ -406,3 +455,9 @@ clearBtn.addEventListener('click', clearInputs);
 // Initialize the UI
 initializeMonsterGrid();
 clearInputs();
+addVersionInfo();
+
+// Add changelog to console for developers
+console.log('DragonSweeper Helper', APP_VERSION);
+console.log('Last Updated:', LAST_UPDATED);
+console.log('Changelog:', CHANGELOG);
