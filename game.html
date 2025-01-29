@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DragonSweeper</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+    </style>
+</head>
+<body>
+    <!-- Load game files -->
+    <script src="game_files/gamelib.js"></script>
+    <script src="game_files/game.js"></script>
+    
+    <!-- Initialize game -->
+    <script>
+        // Wait for both scripts to load
+        window.addEventListener('load', function() {
+            // Create canvas for game
+            canvas = document.createElement('canvas');
+            document.body.appendChild(canvas);
+            
+            // Forward game events to parent
+            window.addEventListener('monsterDefeated', function(event) {
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'monsterDefeated',
+                        detail: event.detail
+                    }, '*');
+                }
+            });
+            
+            // Start the game
+            onLoadPage();
+        });
+    </script>
+</body>
+</html>

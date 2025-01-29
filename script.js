@@ -414,7 +414,74 @@ combinedLevelInput.addEventListener('keypress', (e) => {
 solveBtn.addEventListener('click', validateAndSolve);
 clearBtn.addEventListener('click', clearInputs);
 
+// Listen for monster defeated events from the game
+window.addEventListener('message', function(event) {
+    // Only handle messages from our game iframe
+    if (event.source === document.querySelector('iframe').contentWindow) {
+        if (event.data.type === 'monsterDefeated') {
+            const monster = event.data.detail;
+            // Find the corresponding monster in our tracker
+            const monsterKey = `L${monster.level}`;
+            if (currentMonsters[monsterKey]) {
+                // Update the killed count
+                updateMonsterCount(monsterKey, 1, 'killed');
+            }
+        }
+    }
+});
+
+// Monster ID to level mapping
+const monsterMapping = {
+    'rat': 'L1',
+    'bat': 'L2',
+    'skeleton': 'L3',
+    'gargoyle': 'L4',
+    'slime': 'L5',
+    'snake': 'L6',
+    'minotaur': 'L7',
+    'elemental': 'L8',
+    'minion': 'L9',
+    'mimic': 'L10',
+    'lich': 'L11',
+    'dragon': 'L100',
+    'mine': 'L100'
+};
+
+// Listen for monster defeated events from the game
+window.addEventListener('message', function(event) {
+    // Only handle messages from our game iframe
+    if (event.source === document.querySelector('iframe').contentWindow) {
+        if (event.data.type === 'monsterDefeated') {
+            const monster = event.data.detail;
+            // Convert ActorId to simple name
+            const monsterType = monster.type.toLowerCase();
+            // Find the corresponding monster in our tracker
+            const monsterKey = monsterMapping[monsterType];
+            
+            if (monsterKey && currentMonsters[monsterKey]) {
+                // Update the killed count
+                updateMonsterCount(monsterKey, 1, 'killed');
+                console.log(`Tracked kill: ${monsterType} (${monsterKey})`);
+            } else {
+                console.log(`Unknown monster type: ${monsterType}`);
+            }
+        }
+    }
+});
+
 // Initialize the UI
 initializeMonsterGrid();
 clearInputs();
 addVersionInfo();
+
+// Add event forwarding in game iframe
+const gameFrame = document.querySelector('iframe');
+gameFrame.onload = function() {
+    // Forward monster defeated events from game to parent
+    gameFrame.contentWindow.addEventListener('monsterDefeated', function(event) {
+        window.postMessage({
+            type: 'monsterDefeated',
+            detail: event.detail
+        }, '*');
+    });
+};
