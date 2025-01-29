@@ -24,20 +24,35 @@
             <div class="solver-inputs">
                 <div class="input-group">
                     <label for="locationCount">Number of Hidden Locations:</label>
-                    <input type="number" 
-                           id="locationCount" 
-                           min="1" 
-                           max="99"
+                    <input type="number"
+                           id="locationCount"
+                           min="1"
+                           max="9"
                            step="1"
                            pattern="\d*"
                            inputmode="numeric"
-                           placeholder="Enter number of locations (1-99)"
+                           placeholder="Enter number (1-9)"
                            required>
                 </div>
                 <div class="input-group">
+                    <label for="knownLocations">Number of Known Locations:</label>
+                    <input type="number"
+                           id="knownLocations"
+                           min="0"
+                           max="8"
+                           step="1"
+                           pattern="\d*"
+                           inputmode="numeric"
+                           placeholder="Enter number (0-8)"
+                           required>
+                </div>
+                <div id="knownLevelsContainer" class="known-levels-container">
+                    <!-- Known levels inputs will be added here dynamically -->
+                </div>
+                <div class="input-group">
                     <label for="combinedLevel">Combined Monster Level:</label>
-                    <input type="number" 
-                           id="combinedLevel" 
+                    <input type="number"
+                           id="combinedLevel"
                            min="0"
                            max="999"
                            step="1"

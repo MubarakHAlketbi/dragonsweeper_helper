@@ -23,10 +23,15 @@ let currentMonsters = JSON.parse(JSON.stringify(INITIAL_MONSTERS));
 // UI Elements
 const monsterGrid = document.getElementById('monsterGrid');
 const locationCountInput = document.getElementById('locationCount');
+const knownLocationsInput = document.getElementById('knownLocations');
+const knownLevelsContainer = document.getElementById('knownLevelsContainer');
 const combinedLevelInput = document.getElementById('combinedLevel');
 const solveBtn = document.getElementById('solveBtn');
 const clearBtn = document.getElementById('clearBtn');
 const solutionsDiv = document.getElementById('solutions');
+
+// Known locations state
+let knownLevels = [];
 
 // Input validation
 function validateNumberInput(input, min, max) {
@@ -39,12 +44,68 @@ function validateNumberInput(input, min, max) {
     value = Math.max(min, Math.min(max, value));
     return value.toString();
 }
-
 // Handle input changes
 function handleInputChange(input, min, max) {
     const validValue = validateNumberInput(input, min, max);
     input.value = validValue;
 }
+
+// Create known level inputs
+function createKnownLevelInputs(count) {
+    knownLevelsContainer.innerHTML = '';
+    knownLevels = new Array(count).fill(0);
+    
+    if (count > 0) {
+        for (let i = 0; i < count; i++) {
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'known-level-input';
+            
+            const label = document.createElement('label');
+            label.textContent = `Known Location ${i + 1} Level:`;
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = '0';
+            input.max = '100';
+            input.value = '0';
+            input.placeholder = 'Level (0-100)';
+            input.dataset.index = i;
+            
+            input.addEventListener('input', (e) => {
+                const validValue = validateNumberInput(e.target, 0, 100);
+                e.target.value = validValue;
+                knownLevels[i] = parseInt(validValue) || 0;
+                updateRemainingLevel();
+            });
+            
+            inputGroup.appendChild(label);
+            inputGroup.appendChild(input);
+            knownLevelsContainer.appendChild(inputGroup);
+        }
+        
+        // Add remaining level display
+        const remainingDiv = document.createElement('div');
+        remainingDiv.id = 'remainingLevel';
+        remainingDiv.className = 'remaining-level';
+        knownLevelsContainer.appendChild(remainingDiv);
+        
+        updateRemainingLevel();
+    }
+}
+
+// Update remaining level display
+function updateRemainingLevel() {
+    const remainingDiv = document.getElementById('remainingLevel');
+    if (!remainingDiv) return;
+    
+    const totalLevel = parseInt(combinedLevelInput.value) || 0;
+    const knownTotal = knownLevels.reduce((sum, level) => sum + level, 0);
+    const remaining = totalLevel - knownTotal;
+    
+    remainingDiv.textContent = `Remaining Level for Unknown Locations: ${remaining}`;
+    remainingDiv.style.color = remaining < 0 ? 'var(--danger-color)' : 'var(--accent-color)';
+}
+
 
 // Initialize monster tracker grid
 function initializeMonsterGrid() {
@@ -205,7 +266,10 @@ function displaySolutions(solutions) {
 // Clear inputs and solutions
 function clearInputs() {
     locationCountInput.value = '';
+    knownLocationsInput.value = '';
     combinedLevelInput.value = '';
+    knownLevelsContainer.innerHTML = '';
+    knownLevels = [];
     locationCountInput.focus();
     solutionsDiv.innerHTML = `
         <div class="solution-summary">Enter values above and click Find Possible Combinations</div>
@@ -214,33 +278,37 @@ function clearInputs() {
 
 // Validate and solve
 function validateAndSolve() {
-    const locations = parseInt(locationCountInput.value);
+    const unknownLocations = parseInt(locationCountInput.value);
+    const knownLocationCount = parseInt(knownLocationsInput.value) || 0;
     const targetLevel = parseInt(combinedLevelInput.value);
     
-    if (isNaN(locations) || isNaN(targetLevel)) {
+    // Basic input validation
+    if (isNaN(unknownLocations) || isNaN(targetLevel)) {
         solutionsDiv.innerHTML = `
             <div class="solution-summary">Invalid Input</div>
             <div class="solution-item">
                 <div class="solution-content">
-                    Please enter valid numbers for both fields.
+                    Please enter valid numbers for all required fields.
                 </div>
             </div>
         `;
         return;
     }
     
-    if (locations < 1 || locations > 99) {
+    // Validate unknown locations
+    if (unknownLocations < 1 || unknownLocations > 9) {
         solutionsDiv.innerHTML = `
             <div class="solution-summary">Invalid Input</div>
             <div class="solution-item">
                 <div class="solution-content">
-                    Number of locations must be between 1 and 99.
+                    Number of unknown locations must be between 1 and 9.
                 </div>
             </div>
         `;
         return;
     }
 
+    // Validate target level
     if (targetLevel < 0 || targetLevel > 999) {
         solutionsDiv.innerHTML = `
             <div class="solution-summary">Invalid Input</div>
@@ -253,22 +321,54 @@ function validateAndSolve() {
         return;
     }
 
-    const solutions = generateCombinations(locations, targetLevel);
+    // Calculate remaining level after known locations
+    const knownTotal = knownLevels.reduce((sum, level) => sum + level, 0);
+    const remainingLevel = targetLevel - knownTotal;
+
+    if (remainingLevel < 0) {
+        solutionsDiv.innerHTML = `
+            <div class="solution-summary">Invalid Input</div>
+            <div class="solution-item">
+                <div class="solution-content">
+                    Known locations total (${knownTotal}) exceeds combined level (${targetLevel}).
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    const solutions = generateCombinations(unknownLocations, remainingLevel);
     displaySolutions(solutions);
 }
 
 // Event listeners
 locationCountInput.addEventListener('input', () => {
-    handleInputChange(locationCountInput, 1, 99);
+    handleInputChange(locationCountInput, 1, 9);
+});
+
+knownLocationsInput.addEventListener('input', () => {
+    handleInputChange(knownLocationsInput, 0, 8);
+    const count = parseInt(knownLocationsInput.value) || 0;
+    createKnownLevelInputs(count);
 });
 
 combinedLevelInput.addEventListener('input', () => {
     handleInputChange(combinedLevelInput, 0, 999);
+    updateRemainingLevel();
 });
 
 locationCountInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         if (locationCountInput.value) {
+            knownLocationsInput.focus();
+        }
+        e.preventDefault();
+    }
+});
+
+knownLocationsInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        if (knownLocationsInput.value) {
             combinedLevelInput.focus();
         }
         e.preventDefault();
