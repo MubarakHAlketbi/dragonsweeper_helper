@@ -671,3 +671,68 @@ button#clearBtn:hover {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
 }
+
+/* Credits Section */
+.credits {
+    margin-top: 15px;
+    padding: 10px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.credit-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.credit-label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.credits a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.credits a:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+}
+
+.donate-link {
+    background-color: var(--success-color);
+    color: var(--text-primary) !important;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.donate-link:hover {
+    filter: brightness(1.1);
+    text-decoration: none !important;
+}
+
+@media (max-width: 768px) {
+    .credits {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 8px;
+        margin-top: 10px;
+    }
+
+    .credit-item {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

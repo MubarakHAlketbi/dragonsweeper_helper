@@ -1,49 +1,11 @@
-// Version and update info
+// Version info
 const APP_VERSION = 'v1.2.0';
-const LAST_UPDATED = '2024-01-29';
-const CHANGELOG = {
-    'v1.2.0': [
-        'Improved monster card layout',
-        'Changed known count to start from 0',
-        'Added unknown count display',
-        'Added helper information',
-        'Fixed button states'
-    ],
-    'v1.1.0': [
-        'Added known locations support',
-        'Added remaining level calculation',
-        'Added total locations limit (max 9)'
-    ],
-    'v1.0.0': [
-        'Initial release',
-        'Basic monster tracking',
-        'Combination solver'
-    ]
-};
 
-// Add version and update info
+// Add version info
 function addVersionInfo() {
     const versionSpan = document.querySelector('.version');
     if (versionSpan) {
         versionSpan.textContent = APP_VERSION;
-    }
-
-    const helperInfo = document.querySelector('.helper-info');
-    if (helperInfo) {
-        const updateInfo = document.createElement('div');
-        updateInfo.className = 'info-item update-info';
-        
-        const lastUpdated = new Date(LAST_UPDATED);
-        const timeAgo = Math.floor((new Date() - lastUpdated) / (1000 * 60 * 60 * 24));
-        const timeAgoText = timeAgo === 0 ? 'today' : 
-                           timeAgo === 1 ? 'yesterday' : 
-                           `${timeAgo} days ago`;
-
-        updateInfo.innerHTML = `
-            <span class="info-label">Last Updated:</span>
-            ${lastUpdated.toLocaleDateString()} (${timeAgoText})
-        `;
-        helperInfo.appendChild(updateInfo);
     }
 }
 
@@ -456,8 +418,3 @@ clearBtn.addEventListener('click', clearInputs);
 initializeMonsterGrid();
 clearInputs();
 addVersionInfo();
-
-// Add changelog to console for developers
-console.log('DragonSweeper Helper', APP_VERSION);
-console.log('Last Updated:', LAST_UPDATED);
-console.log('Changelog:', CHANGELOG);
