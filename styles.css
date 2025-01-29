@@ -27,16 +27,23 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1800px;
     margin: 0 auto;
     background-color: var(--bg-dark);
-    padding: 15px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     height: calc(100vh - 20px);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+}
+
+.main-layout {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
 }
 
 h1 {
@@ -67,31 +74,38 @@ section {
 
 /* Monster Tracker Styles */
 .monster-tracker {
-    padding: 10px;
-    min-height: 220px;
-    max-height: 220px;
+    padding: 20px;
+    width: 800px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .monster-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 6px;
-    padding: 4px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px;
     overflow-y: auto;
-    height: calc(100% - 35px);
+    flex: 1;
 }
 
 .monster-card {
     background-color: var(--bg-card);
-    padding: 4px 6px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 6px;
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 10px;
     font-size: 12px;
     transition: all 0.2s;
-    height: 56px;
+    min-height: 160px;
+    height: auto;
+    max-width: 260px;
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
 }
 
 .monster-card:hover {
@@ -102,13 +116,20 @@ section {
 .monster-info {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    padding: 0 35px 8px 0;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    height: auto;
+    min-height: 42px;
 }
 
 .monster-icon {
-    width: 18px;
-    height: 18px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
+    flex-shrink: 0;
 }
 
 .monster-icon-small {
@@ -120,64 +141,97 @@ section {
 }
 
 .monster-name {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary);
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
 }
 
 .monster-stats {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    padding: 0 2px;
 }
 
 .monster-counters {
     display: flex;
     flex-direction: column;
-    font-size: 10px;
+    font-size: 12px;
     color: var(--text-secondary);
-    line-height: 1.3;
+    line-height: 1.4;
+    padding: 8px;
+    background-color: var(--bg-dark);
+    border-radius: 4px;
 }
 
-.found-count {
+.known-count {
     color: var(--success-color);
+    font-weight: 500;
+    font-size: 11px;
+}
+
+.killed-count {
+    color: var(--danger-color);
+    font-weight: 500;
+    font-size: 11px;
 }
 
 .max-count {
-    opacity: 0.7;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    background-color: var(--bg-dark);
+    padding: 3px 6px;
+    border-radius: 3px;
+    opacity: 0.9;
 }
 
 .monster-controls {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    padding: 8px;
+    background-color: var(--bg-dark);
+    border-radius: 4px;
+    margin-top: auto;
 }
 
 .control-group {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    padding: 2px;
 }
 
 .control-group label {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text-secondary);
-    min-width: 40px;
+    min-width: 42px;
+    font-weight: 500;
 }
 
 .monster-controls button {
-    width: 16px;
-    height: 16px;
+    width: 22px;
+    height: 22px;
     border: none;
     border-radius: 3px;
     background-color: var(--accent-color);
     color: var(--text-primary);
     cursor: pointer;
-    font-size: 11px;
+    font-size: 13px;
     transition: all 0.2s;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 500;
 }
 
 .monster-controls button:hover {
@@ -193,7 +247,7 @@ section {
 .monster-count, .killed-count {
     font-size: 12px;
     font-weight: bold;
-    min-width: 18px;
+    min-width: 24px;
     text-align: center;
     color: var(--text-primary);
 }
@@ -213,6 +267,27 @@ section {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    min-width: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .monster-tracker {
+        width: 100%;
+        height: 400px;
+    }
+
+    .monster-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .monster-card {
+        height: 110px;
+    }
 }
 
 .solver-inputs {
@@ -419,13 +494,57 @@ button#clearBtn:hover {
 }
 
 /* Responsive Design */
+@media (max-width: 1400px) {
+    .monster-tracker {
+        width: 700px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .monster-tracker {
+        width: 100%;
+        height: auto;
+        min-height: 500px;
+        max-height: 700px;
+    }
+
+    .monster-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .container {
-        padding: 8px;
+        padding: 10px;
     }
     
     .monster-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .monster-card {
+        min-height: 150px;
+        max-width: none;
+    }
+
+    .monster-info {
+        min-height: 38px;
+    }
+
+    .monster-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .monster-name {
+        font-size: 14px;
+        max-width: 110px;
     }
 
     .solver-buttons {
@@ -436,10 +555,32 @@ button#clearBtn:hover {
     button#clearBtn {
         width: 100%;
     }
+}
 
-    .monster-tracker {
-        min-height: 280px;
-        max-height: 280px;
+@media (max-width: 480px) {
+    .monster-grid {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 10px;
+    }
+
+    .monster-card {
+        min-height: 140px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .monster-info {
+        min-height: 36px;
+    }
+
+    .monster-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .monster-name {
+        font-size: 13px;
+        max-width: 140px;
     }
 }
 
