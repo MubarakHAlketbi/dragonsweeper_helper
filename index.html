@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DragonSweeper Helper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DragonSweeper Helper</h1>
+        
+        <!-- Monster Tracker Section -->
+        <section class="monster-tracker">
+            <h2>Monster Tracker</h2>
+            <div class="monster-grid" id="monsterGrid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Combination Solver Section -->
+        <section class="combination-solver">
+            <h2>Combination Solver</h2>
+            <div class="solver-inputs">
+                <div class="input-group">
+                    <label for="locationCount">Number of Hidden Locations:</label>
+                    <input type="number" 
+                           id="locationCount" 
+                           min="1" 
+                           max="99"
+                           step="1"
+                           pattern="\d*"
+                           inputmode="numeric"
+                           placeholder="Enter number of locations (1-99)"
+                           required>
+                </div>
+                <div class="input-group">
+                    <label for="combinedLevel">Combined Monster Level:</label>
+                    <input type="number" 
+                           id="combinedLevel" 
+                           min="0"
+                           max="999"
+                           step="1"
+                           pattern="\d*"
+                           inputmode="numeric"
+                           placeholder="Enter combined level (0-999)"
+                           required>
+                </div>
+                <div class="solver-buttons">
+                    <button id="solveBtn" type="button">Find Possible Combinations</button>
+                    <button id="clearBtn" type="button">Clear</button>
+                </div>
+            </div>
+            <div class="solutions" id="solutions">
+                <!-- Will be populated by JavaScript -->
+                <div class="solution-summary">Enter values above and click Find Possible Combinations</div>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
