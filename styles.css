@@ -148,8 +148,20 @@ section {
 
 .monster-controls {
     display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.control-group {
+    display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.control-group label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    min-width: 40px;
 }
 
 .monster-controls button {
@@ -178,12 +190,20 @@ section {
     opacity: 0.5;
 }
 
-.monster-count {
+.monster-count, .killed-count {
     font-size: 12px;
     font-weight: bold;
     min-width: 18px;
     text-align: center;
     color: var(--text-primary);
+}
+
+.killed-count {
+    color: var(--danger-color);
+}
+
+.known-count {
+    color: var(--success-color);
 }
 
 /* Combination Solver Styles */
