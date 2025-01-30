@@ -391,13 +391,31 @@ section {
 }
 
 /* Combination Solver Styles */
+.monster-tracker {
+    padding: 20px;
+    width: 800px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 1000px;
+}
+
 .combination-solver {
     flex: 1;
     padding: 10px;
     display: flex;
     flex-direction: column;
-    min-height: 0;
     min-width: 0;
+    height: 1000px;
+    overflow-y: auto;
+}
+
+.solutions {
+    background-color: var(--bg-dark);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 10px;
 }
 
 /* Responsive Design */
@@ -552,45 +570,6 @@ section {
     opacity: 0.5;
 }
 
-.known-levels-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-    background-color: var(--bg-dark);
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    margin-top: 4px;
-}
-
-.known-level-input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.known-level-input label {
-    flex: 1;
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-.known-level-input input {
-    width: 80px;
-    padding: 6px 8px;
-}
-
-.remaining-level {
-    font-size: 12px;
-    color: var(--accent-color);
-    padding: 6px 8px;
-    background-color: var(--bg-dark);
-    border-radius: 4px;
-    margin-top: 4px;
-    text-align: center;
-    font-weight: bold;
-}
-
 .solver-buttons {
     display: flex;
     gap: 8px;
@@ -633,6 +612,14 @@ button#clearBtn:hover {
 }
 
 /* Solutions Display */
+.solutions-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    height: 100%;
+}
+
 .solutions {
     flex: 1;
     overflow-y: auto;
@@ -640,7 +627,23 @@ button#clearBtn:hover {
     padding: 10px;
     border-radius: 6px;
     font-size: 13px;
-    min-height: 0;
+    height: 500px;
+}
+
+.reset-button {
+    margin-left: 10px;
+    padding: 4px 8px;
+    background-color: var(--danger-color);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.reset-button:hover {
+    filter: brightness(1.1);
 }
 
 .solution-summary {

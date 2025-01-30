@@ -23,15 +23,10 @@ let currentMonsters = JSON.parse(JSON.stringify(INITIAL_MONSTERS));
 // UI Elements
 const monsterGrid = document.getElementById('monsterGrid');
 const locationCountInput = document.getElementById('locationCount');
-const knownLocationsInput = document.getElementById('knownLocations');
-const knownLevelsContainer = document.getElementById('knownLevelsContainer');
 const combinedLevelInput = document.getElementById('combinedLevel');
 const solveBtn = document.getElementById('solveBtn');
 const clearBtn = document.getElementById('clearBtn');
 const solutionsDiv = document.getElementById('solutions');
-
-// Known locations state
-let knownLevels = [];
 
 // Input validation
 function validateNumberInput(input, min, max) {
@@ -51,61 +46,6 @@ function handleInputChange(input, min, max) {
     input.value = validValue;
 }
 
-// Create known level inputs
-function createKnownLevelInputs(count) {
-    knownLevelsContainer.innerHTML = '';
-    knownLevels = new Array(count).fill(0);
-    
-    if (count > 0) {
-        for (let i = 0; i < count; i++) {
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'known-level-input';
-            
-            const label = document.createElement('label');
-            label.textContent = `Known Location ${i + 1} Level:`;
-            
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.min = '0';
-            input.max = '100';
-            input.value = '0';
-            input.placeholder = 'Level (0-100)';
-            input.dataset.index = i;
-            
-            input.addEventListener('input', (e) => {
-                const validValue = validateNumberInput(e.target, 0, 100);
-                e.target.value = validValue;
-                knownLevels[i] = parseInt(validValue) || 0;
-                updateRemainingLevel();
-            });
-            
-            inputGroup.appendChild(label);
-            inputGroup.appendChild(input);
-            knownLevelsContainer.appendChild(inputGroup);
-        }
-        
-        // Add remaining level display
-        const remainingDiv = document.createElement('div');
-        remainingDiv.id = 'remainingLevel';
-        remainingDiv.className = 'remaining-level';
-        knownLevelsContainer.appendChild(remainingDiv);
-        
-        updateRemainingLevel();
-    }
-}
-
-// Update remaining level display
-function updateRemainingLevel() {
-    const remainingDiv = document.getElementById('remainingLevel');
-    if (!remainingDiv) return;
-    
-    const totalLevel = parseInt(combinedLevelInput.value) || 0;
-    const knownTotal = knownLevels.reduce((sum, level) => sum + level, 0);
-    const remaining = totalLevel - knownTotal;
-    
-    remainingDiv.textContent = `Remaining Level for Unknown Locations: ${remaining}`;
-    remainingDiv.style.color = remaining < 0 ? 'var(--danger-color)' : 'var(--accent-color)';
-}
 
 // Initialize monster tracker grid
 function initializeMonsterGrid() {
@@ -245,8 +185,6 @@ function generateCombinations(locations, targetLevel) {
 
 // Display solutions
 function displaySolutions(solutions) {
-    solutionsDiv.innerHTML = '';
-    
     if (solutions.length === 0) {
         solutionsDiv.innerHTML = `
             <div class="solution-summary">No valid combinations found</div>
@@ -259,33 +197,37 @@ function displaySolutions(solutions) {
         return;
     }
 
-    // Add summary header
-    const summaryDiv = document.createElement('div');
-    summaryDiv.className = 'solution-summary';
-    summaryDiv.textContent = `Found ${solutions.length} possible combinations`;
-    solutionsDiv.appendChild(summaryDiv);
+    let html = `<div class="solution-summary">Found ${solutions.length} possible combinations</div>`;
 
     // Display solutions with better formatting
     solutions.slice(0, 100).forEach((solution, index) => {
-        const solutionHtml = formatSolution(solution, index, Math.min(solutions.length, 100));
-        solutionsDiv.insertAdjacentHTML('beforeend', solutionHtml);
+        html += formatSolution(solution, index, Math.min(solutions.length, 100));
     });
 
     if (solutions.length > 100) {
-        const note = document.createElement('div');
-        note.className = 'solution-note';
-        note.textContent = `Showing first 100 of ${solutions.length} solutions`;
-        solutionsDiv.appendChild(note);
+        html += `
+            <div class="solution-note">
+                Showing first 100 of ${solutions.length} solutions
+            </div>
+        `;
     }
+
+    solutionsDiv.innerHTML = html;
 }
+
+// Reset monster tracker
+function resetMonsterTracker() {
+    currentMonsters = JSON.parse(JSON.stringify(INITIAL_MONSTERS));
+    initializeMonsterGrid();
+}
+
+// Add reset button event listener
+document.getElementById('resetTrackerBtn').addEventListener('click', resetMonsterTracker);
 
 // Clear inputs and solutions
 function clearInputs() {
     locationCountInput.value = '';
-    knownLocationsInput.value = '';
     combinedLevelInput.value = '';
-    knownLevelsContainer.innerHTML = '';
-    knownLevels = [];
     locationCountInput.focus();
     solutionsDiv.innerHTML = `
         <div class="solution-summary">Enter values above and click Find Possible Combinations</div>
@@ -294,12 +236,11 @@ function clearInputs() {
 
 // Validate and solve
 function validateAndSolve() {
-    const unknownLocations = parseInt(locationCountInput.value);
-    const knownLocationCount = parseInt(knownLocationsInput.value) || 0;
+    const locations = parseInt(locationCountInput.value);
     const targetLevel = parseInt(combinedLevelInput.value);
     
     // Basic input validation
-    if (isNaN(unknownLocations) || isNaN(targetLevel)) {
+    if (isNaN(locations) || isNaN(targetLevel)) {
         solutionsDiv.innerHTML = `
             <div class="solution-summary">Invalid Input</div>
             <div class="solution-item">
@@ -311,13 +252,13 @@ function validateAndSolve() {
         return;
     }
     
-    // Validate unknown locations
-    if (unknownLocations < 1 || unknownLocations > 9) {
+    // Validate locations
+    if (locations < 1 || locations > 9) {
         solutionsDiv.innerHTML = `
             <div class="solution-summary">Invalid Input</div>
             <div class="solution-item">
                 <div class="solution-content">
-                    Number of unknown locations must be between 1 and 9.
+                    Number of locations must be between 1 and 9.
                 </div>
             </div>
         `;
@@ -337,23 +278,7 @@ function validateAndSolve() {
         return;
     }
 
-    // Calculate remaining level after known locations
-    const knownTotal = knownLevels.reduce((sum, level) => sum + level, 0);
-    const remainingLevel = targetLevel - knownTotal;
-
-    if (remainingLevel < 0) {
-        solutionsDiv.innerHTML = `
-            <div class="solution-summary">Invalid Input</div>
-            <div class="solution-item">
-                <div class="solution-content">
-                    Known locations total (${knownTotal}) exceeds combined level (${targetLevel}).
-                </div>
-            </div>
-        `;
-        return;
-    }
-
-    const solutions = generateCombinations(unknownLocations, remainingLevel);
+    const solutions = generateCombinations(locations, targetLevel);
     displaySolutions(solutions);
 }
 
@@ -362,29 +287,13 @@ locationCountInput.addEventListener('input', () => {
     handleInputChange(locationCountInput, 1, 9);
 });
 
-knownLocationsInput.addEventListener('input', () => {
-    handleInputChange(knownLocationsInput, 0, 8);
-    const count = parseInt(knownLocationsInput.value) || 0;
-    createKnownLevelInputs(count);
-});
-
 combinedLevelInput.addEventListener('input', () => {
     handleInputChange(combinedLevelInput, 0, 999);
-    updateRemainingLevel();
 });
 
 locationCountInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         if (locationCountInput.value) {
-            knownLocationsInput.focus();
-        }
-        e.preventDefault();
-    }
-});
-
-knownLocationsInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        if (knownLocationsInput.value) {
             combinedLevelInput.focus();
         }
         e.preventDefault();

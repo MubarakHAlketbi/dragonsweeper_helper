@@ -11,7 +11,7 @@
         <!-- Version Info Box -->
         <div class="version-info">
             <div>Game version: 1.0.1</div>
-            <div>Helper version: 1.2.1</div>
+            <div>Helper version: 1.2.2</div>
         </div>
 
         <!-- Game Title and Container -->
@@ -33,7 +33,13 @@
             </iframe>
         </div>
 
-        <h1>DragonSweeper Helper</h1>
+        <h1 class="game-title">
+            <span class="title-text">
+                <a href="https://github.com/MubarakHAlketbi/dragonsweeper_helper" target="_blank">DragonSweeper Helper</a>
+                by <a href="https://x.com/MubarakHAlketbi" target="_blank">Mubarak H. Alketbi</a>
+            </span>
+            <a href="https://pay.ziina.com/MubarakHAlketbi" target="_blank" class="donate-link">Donate</a>
+        </h1>
         <div class="helper-info">
             <div class="info-item">
                 <span class="info-label">Unknown:</span> Remaining monsters (Max - (Known + Killed))
@@ -52,7 +58,7 @@
         <div class="main-layout">
             <!-- Monster Tracker Section -->
             <section class="monster-tracker">
-                <h2>Monster Tracker</h2>
+                <h2>Monster Tracker <button id="resetTrackerBtn" class="reset-button">Reset</button></h2>
                 <div class="monster-grid" id="monsterGrid">
                     <!-- Will be populated by JavaScript -->
                 </div>
@@ -75,21 +81,6 @@
                            required>
                 </div>
                 <div class="input-group">
-                    <label for="knownLocations">Number of Known Locations:</label>
-                    <input type="number"
-                           id="knownLocations"
-                           min="0"
-                           max="8"
-                           step="1"
-                           pattern="\d*"
-                           inputmode="numeric"
-                           placeholder="Enter number (0-8)"
-                           required>
-                </div>
-                <div id="knownLevelsContainer" class="known-levels-container">
-                    <!-- Known levels inputs will be added here dynamically -->
-                </div>
-                <div class="input-group">
                     <label for="combinedLevel">Combined Monster Level:</label>
                     <input type="number"
                            id="combinedLevel"
@@ -107,19 +98,11 @@
                 </div>
             </div>
             <div class="solutions" id="solutions">
-                <!-- Will be populated by JavaScript -->
                 <div class="solution-summary">Enter values above and click Find Possible Combinations</div>
+                <!-- Will be populated by JavaScript -->
             </div>
         </section>
         </div>
-        <footer class="credits">
-            <div class="credit-item">
-                <span class="credit-label">Helper:</span>
-                <a href="https://github.com/MubarakHAlketbi/dragonsweeper_helper" target="_blank">Source Code</a>
-                by Mubarak H. Alketbi
-                <a href="https://pay.ziina.com/MubarakHAlketbi" target="_blank" class="donate-link">Donate</a>
-            </div>
-        </footer>
     </div>
     <script src="script.js"></script>
 </body>
