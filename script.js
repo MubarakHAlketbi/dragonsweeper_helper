@@ -1,14 +1,3 @@
-// Version info
-const APP_VERSION = 'v1.2.0';
-
-// Add version info
-function addVersionInfo() {
-    const versionSpan = document.querySelector('.version');
-    if (versionSpan) {
-        versionSpan.textContent = APP_VERSION;
-    }
-}
-
 // Initial monster data
 const INITIAL_MONSTERS = {
     'L0': { level: 0, max: 1, known: 0, killed: 0 },
@@ -456,7 +445,6 @@ window.addEventListener('message', function(event) {
 // Initialize the UI
 initializeMonsterGrid();
 clearInputs();
-addVersionInfo();
 
 // Add event forwarding in game iframe
 const gameFrame = document.querySelector('iframe');
